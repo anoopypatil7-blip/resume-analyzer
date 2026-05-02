@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ATS Resume Analyzer</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            background: #f5f7fb;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            padding: 15px;
+            color: white;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 70%;
+            margin: auto;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+
+        input[type="file"] {
+            margin-top: 10px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        /* Progress bar */
+        .progress-container {
+            background: #eee;
+            border-radius: 20px;
+            margin-top: 15px;
+        }
+
+        .progress-bar {
+            height: 22px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            line-height: 22px;
+            transition: width 0.5s ease;
+        }
+
+        /* Skill chips */
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .chip {
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .matched {
+            background: #e6f9ec;
+            color: #1b8f4d;
+        }
+
+        .missing {
+            background: #fdecea;
+            color: #c0392b;
+        }
+
+        h2, h3 {
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    ATS Resume Analyzer
+</div>
+
+<div class="container">
+
+    <!-- Upload Section -->
+    <div class="card">
+        <h2>Analyze Your Resume</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            <label>Upload Resume (PDF)</label><br>
+            <input type="file" name="resume" required><br>
+
+            <label>Paste Job Description</label>
+            <textarea name="job_desc" rows="6"
+            placeholder="Paste job description here">{{ request.form.job_desc }}</textarea>
+
+            <button type="submit">Analyze Resume</button>
+        </form>
+    </div>
+
+    {% if score is not none %}
+
+    <!-- Results Section -->
+    <div class="card">
+
+        <h2>Match Score: {{ score }}%</h2>
+
+        <!-- Dynamic Color -->
+        <div class="progress-container">
+            <div class="progress-bar"
+                 style="width: {{ score }}%;
+                        background:
+                        {% if score < 40 %}#e74c3c
+                        {% elif score < 70 %}#f39c12
+                        {% else %}#2ecc71{% endif %};">
+                {{ score }}%
+            </div>
+        </div>
+
+        <h3>Matched Skills</h3>
+        <div class="skills">
+            {% for word in matched %}
+                <span class="chip matched">{{ word }}</span>
+            {% endfor %}
+        </div>
+
+        <h3>Missing Skills</h3>
+        <div class="skills">
+            {% for word in missing %}
+                <span class="chip missing">{{ word }}</span>
+            {% endfor %}
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
